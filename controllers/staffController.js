@@ -1,4 +1,19 @@
 
-exports.index = function(req,res,next){
+exports.index = (req, res, next) => {
     res.send('respond with a resource');
+}
+
+exports.show = (req, res, next) => {
+    const { id } = req.params;
+    console.log(id);
+    return res.status(200).json({
+        data: id
+    });
+}
+
+exports.search = (req, res, next) => {
+    const { name, age } = req.query;
+    return res.status(200).json({
+        data: { name, age }
+    });
 } 
