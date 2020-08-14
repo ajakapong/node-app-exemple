@@ -20,7 +20,7 @@ exports.search = (req, res, next) => {
 
 exports.insert = (req, res, next) => {
     const { name, age } = req.body;
-    return res.status(200).json({
+    return res.status(201).json({
         data: { name, age }
     });
 }
