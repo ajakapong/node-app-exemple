@@ -56,18 +56,29 @@ exports.insert = async (req, res, next) => {
 }
 
 exports.update = async (req, res, next) => {
-    const { id } = req.params;
-    const { name, salary } = req.body;
-
-    const staff = await Staff.updateOne({ _id: id }, {
-        name: name,
-        salary: salary
-    });
-
-    return res.status(200).json({
-        staff: staff,
-        message: "แก้ไข้อมูลเรียบร้อย"
-    });
+    try {    
+    //    const { id } = req.params;
+       const { id,name, salary } = req.body;
+   
+       if (req.params.id != id) {
+           const error = new Error('ข้อมูล id ไม่ตรงกัน');
+           error.statusCode = 400;
+           throw error;
+       }
+       
+       const staff = await Staff.updateOne({ _id: id }, {
+           name: name,
+           salary: salary
+       });
+   
+       return res.status(200).json({
+           staff: staff,
+           message: "แก้ไขข้อมูลเรียบร้อย"
+       });   
+   
+       } catch (error) {
+           next(error);
+       }
 }
 
 exports.delete = async (req, res, next) => {
