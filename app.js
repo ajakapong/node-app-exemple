@@ -8,7 +8,11 @@ const usersRouter = require('./routes/users');
 const staffRouter = require('./routes/staff');
 const mongoose = require('mongoose');
 
+//middleware
+const errorHanlder  = require("./middlewares/errorHaneler")
+
 const app = express();
+
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -25,5 +29,7 @@ mongoose.connect('mongodb://localhost:27017/pgbackend',
 app.use('/api/', indexRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/staff', staffRouter);
+
+app.use(errorHanlder);
 
 module.exports = app;
