@@ -1,3 +1,5 @@
+const Staff = require('../models/staff')
+
 
 exports.index = (req, res, next) => {
     res.send('respond with a resource');
@@ -18,10 +20,18 @@ exports.search = (req, res, next) => {
     });
 } 
 
-exports.insert = (req, res, next) => {
-    const { name, age } = req.body;
+exports.insert = async (req, res, next) => {
+    const { name, salary } = req.body;
+
+    const staff = new Staff({
+        name : name,
+        salary: salary
+    })
+   
+    await staff.save();
+
     return res.status(201).json({
-        data: { name, age }
+        message: 'เพิ่มข้อมูลเรียบร้อย'
     });
 }
 
