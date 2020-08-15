@@ -10,6 +10,7 @@ const mongoose = require('mongoose');
 
 //middleware
 const errorHanlder  = require("./middlewares/errorHaneler")
+const passport = require('passport');
 
 const app = express();
 
@@ -25,6 +26,8 @@ mongoose.connect('mongodb://localhost:27017/pgbackend',
         useNewUrlParser: true,
         useUnifiedTopology: true
     })
+
+app.use(passport.initialize())
 
 app.use('/api/', indexRouter);
 app.use('/api/users', usersRouter);
