@@ -1,12 +1,15 @@
 
 const User = require('../models/user')
 const { validationResult } = require('express-validator');
+const jwt = require('jsonwebtoken');
 
 exports.index = async (req, res, next) => {
-    const user = await User.find();
+
+    const user = await User.find().select('name email').sort('-_id');
+
     return res.status(200).json({
         data: user
-    })
+    });
 }
 
 exports.register = async (req, res, next) => {
@@ -16,10 +19,10 @@ exports.register = async (req, res, next) => {
         //validation
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-          const error = new Error('ข้อมูลที่ส่งมาไม่ถูกต้อง');
-          error.statusCode = 422;
-          error.validation = errors.array()
-          throw error;
+            const error = new Error('ข้อมูลที่ส่งมาไม่ถูกต้อง');
+            error.statusCode = 422;
+            error.validation = errors.array()
+            throw error;
         }
 
         //check email ซ้ำ
@@ -52,10 +55,10 @@ exports.login = async (req, res, next) => {
         //validation
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-          const error = new Error('ข้อมูลที่ส่งมาไม่ถูกต้อง');
-          error.statusCode = 422;
-          error.validation = errors.array()
-          throw error;
+            const error = new Error('ข้อมูลที่ส่งมาไม่ถูกต้อง');
+            error.statusCode = 422;
+            error.validation = errors.array()
+            throw error;
         }
 
         //check ว่ามีอีเมล์นี้ในระบบหรือไม่
@@ -72,10 +75,26 @@ exports.login = async (req, res, next) => {
             const error = new Error('รหัสผ่านไม่ถูกต้อง');
             error.statusCode = 401;
             throw error;
-        }e
+        }
+
+        const token = await jwt.sign(
+            {
+                id: user._id,
+                role: user.role
+            },
+            'k+ZU=Od!05&Rt,P0*m)Q`l^Z&F#o@doyj^T2:I;VmHhgT/Z925!QjjKU{*:sJr',
+            {
+                expiresIn: '15 days'
+            });
+
+        //decode 
+        const tokenDecode = jwt.decode(token);
 
         return res.status(200).json({
-            message: 'เข้าระบบเรียบร้อย'
+            message: 'เข้าระบบเรียบร้อย',
+            token: token,
+            expires_in : tokenDecode.exp,
+            token_type : "Bearer"
         });
 
     } catch (error) {
