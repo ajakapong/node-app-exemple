@@ -4,13 +4,13 @@ const router = express.Router();
 const userController = require('../controllers/userController'); 
 const { body } = require('express-validator');
 const passportJWT = require('../middlewares/passportJWT')
-
+const checkAdmin = require('../middlewares/checkAdmin')
 
 //getProfile
 router.get('/me',passportJWT.isLogin, userController.me);
 
 /* GET users listing. */
-router.get('/',passportJWT.isLogin, userController.index);
+router.get('/',[passportJWT.isLogin,checkAdmin.isAdmin], userController.index);
 
 router.post('/register', [
     body('name').not().isEmpty().withMessage('ป้อนข้อมูลชื่อสกุลด้วย'),
