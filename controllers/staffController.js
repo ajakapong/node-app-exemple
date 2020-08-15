@@ -1,51 +1,71 @@
-const Staff = require('../models/staff')
+const Staff = require('../models/staff');
+const staff = require('../models/staff');
 
 
-exports.index = (req, res, next) => {
-    res.send('respond with a resource');
+exports.index = async (req, res, next) => {
+    // const staff = await Staff.find().select('-sarary').sort('-_id');
+    const staff = await Staff.find().where('salary').gte(20000).sort('-_id');
+    return res.status(200).json({
+        data: staff
+    })
 }
 
-exports.show = (req, res, next) => {
+exports.show = async (req, res, next) => {
     const { id } = req.params;
-    console.log(id);
+    const staff = await Staff.findById(id);
     return res.status(200).json({
-        data: id
+        data: staff
     });
 }
 
-exports.search = (req, res, next) => {
-    const { name, age } = req.query;
+exports.search = async (req, res, next) => {
+    const { name } = req.query;
+    const staff = await Staff.find({name: { $regex: '.*' + name + '.*', $options: 'i' } })
+
     return res.status(200).json({
-        data: { name, age }
+        data: staff
     });
-} 
+}
 
 exports.insert = async (req, res, next) => {
     const { name, salary } = req.body;
 
     const staff = new Staff({
-        name : name,
+        name: name,
         salary: salary
     })
-   
-    await staff.save();
+
+    const dataUpdate = await staff.save();
 
     return res.status(201).json({
-        message: 'เพิ่มข้อมูลเรียบร้อย'
+        message: 'เพิ่มข้อมูลเรียบร้อย',
+        data: dataUpdate
     });
 }
 
-exports.update = (req, res, next) => {
+exports.update = async (req, res, next) => {
     const { id } = req.params;
-    const { name, age } = req.body;
-    return res.status(200).json({
-        data: { id,name, age }
-    });
-} 
+    const { name, salary } = req.body;
 
-exports.delete = (req, res, next) => {
-    const { id } = req.params;
+    const staff = await Staff.updateOne({ _id: id },{
+        name : name,
+        salary:salary
+    });
+
     return res.status(200).json({
-        data: { id }
+        staff : staff,
+        message: "แก้ไข้อมูลเรียบร้อย"
+    });
+}
+
+exports.delete = async (req, res, next) => {
+
+    const { id } = req.params;
+
+    const staff = await Staff.deleteOne({ _id: id });
+
+    return res.status(200).json({
+        staff: staff,
+        data: 'ลบข้อมูลเรียบร้อยแล้ว'
     });
 } 
