@@ -2,6 +2,7 @@
 const User = require('../models/user')
 const { validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken');
+const { JWT_SECRET } = require('../config')
 
 exports.index = async (req, res, next) => {
 
@@ -90,7 +91,7 @@ exports.login = async (req, res, next) => {
                 id: user._id,
                 role: user.role
             },
-            'k+ZU=Od!05&Rt,P0*m)Q`l^Z&F#o@doyj^T2:I;VmHhgT/Z925!QjjKU{*:sJr',
+            JWT_SECRET,
             {
                 expiresIn: '15 days'
             });
