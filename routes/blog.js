@@ -1,16 +1,13 @@
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+const express = require('express');
+const router = express.Router();
 
-const schema = new Schema({
-  topic: { type: String, trim: true, required: true },
-  photo: { type: String, default: 'nopic.png' },
-  user: { type: Schema.Types.ObjectId, ref: 'User' }
-},{
-    collection: 'blogs',
-    timestamps: true
-});
+const blogController = require('../controllers/blogController')
 
-const blog = mongoose.model('Blog', schema);
+//http://localhost:3000/api/blog/
+router.get('/', blogController.index );
 
-module.exports = blog;
+//http://localhost:3000/api/blog/
+router.post('/', blogController.insert );
 
+
+module.exports = router;
